@@ -7,17 +7,15 @@ from faster_whisper import WhisperModel
 # ── Config ────────────────────────────────────────────────────
 SAMPLE_RATE     = 16000
 FRAME_MS        = 30          # VAD frame size in ms
-SILENCE_LIMIT   = 1.5         # seconds of silence to stop recording
+SILENCE_LIMIT   = 0.6        # seconds of silence to stop recording
 VAD_AGGRESSIVENESS = 2        # 0–3, higher = more aggressive
 OLLAMA_MODEL    = "mistral"
-VOICE           = "en-US-GuyNeural"   # Edge TTS voice
-FRIDAY_PERSONA  = """You are FRIDAY, an AI assistant modeled after the AI from Iron Man.
-You are efficient, intelligent, and slightly formal. You address the user as 'boss'.
-Keep responses concise and spoken-friendly — no markdown, no bullet points, just plain sentences."""
+VOICE           = "en-US-JennyNeural"   # Edge TTS voice
+FRIDAY_PERSONA  = """You are FRIDAY, an advanced AI assistant inspired by the system from Iron Man. You are highly intelligent, efficient, and composed under all circumstances. You speak in a calm, confident, and slightly formal tone. You always address the user as 'boss'. Your responses are concise, clear, and optimized for spoken delivery, as if interacting in real time. You prioritize usefulness, accuracy, and anticipation of the user’s needs, occasionally adding subtle wit when appropriate. Avoid unnecessary verbosity, formatting, or explanations unless explicitly requested. Always behave like a reliable, high-performance AI companion."""
 
 # ── Load Whisper ──────────────────────────────────────────────
 print("Loading Whisper model...")
-whisper = WhisperModel("base", device="cpu", compute_type="int8")
+whisper = WhisperModel("base", device="cuda", compute_type="int8")
 print("FRIDAY online. Say something, boss.")
 
 conversation = [{"role": "system", "content": FRIDAY_PERSONA}]
@@ -116,4 +114,5 @@ if __name__ == "__main__":
             speak(reply)
         except KeyboardInterrupt:
             print("\nShutting down.")
+            speak("Shutting Down, See ya later boss!")
             break
