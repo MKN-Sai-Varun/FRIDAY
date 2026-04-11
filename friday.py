@@ -1,17 +1,22 @@
 import sounddevice as sd
 import numpy as np
 import webrtcvad
-import wave, io, tempfile, asyncio, os, requests, subprocess
+import wave, io, tempfile, asyncio, os
 from faster_whisper import WhisperModel
+from groq import Groq
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ── Config ────────────────────────────────────────────────────
-SAMPLE_RATE     = 16000
-FRAME_MS        = 30          # VAD frame size in ms
-SILENCE_LIMIT   = 0.6        # seconds of silence to stop recording
-VAD_AGGRESSIVENESS = 2        # 0–3, higher = more aggressive
-OLLAMA_MODEL    = "mistral"
-VOICE           = "en-US-JennyNeural"   # Edge TTS voice
-FRIDAY_PERSONA  = """You are FRIDAY, an advanced AI assistant inspired by the system from Iron Man. You are highly intelligent, efficient, and composed under all circumstances. You speak in a calm, confident, and slightly formal tone. You always address the user as 'boss'. Your responses are concise, clear, and optimized for spoken delivery, as if interacting in real time. You prioritize usefulness, accuracy, and anticipation of the user’s needs, occasionally adding subtle wit when appropriate. Avoid unnecessary verbosity, formatting, or explanations unless explicitly requested. Always behave like a reliable, high-performance AI companion."""
+SAMPLE_RATE        = int(os.getenv("SAMPLE_RATE", 16000))
+FRAME_MS           = int(os.getenv("FRAME_MS", 30))
+SILENCE_LIMIT      = float(os.getenv("SILENCE_LIMIT", 0.6))
+VAD_AGGRESSIVENESS = int(os.getenv("VAD_AGGRESSIVENESS", 2))
+GROQ_MODEL         = os.getenv("OLLAMA_MODEL", "llama-3.3-70b-versatile")
+GROQ_API_KEY       = os.getenv("GROQ_API_KEY")
+VOICE              = os.getenv("VOICE", "en-US-JennyNeural")
+FRIDAY_PERSONA     = os.getenv("FRIDAY_PERSONA") or "You are FRIDAY, an advanced AI assistant inspired by the system from Iron Man. You are highly intelligent, efficient, and composed under all circumstances. You speak in a calm, confident, and slightly formal tone. You always address the user as 'boss'. Your responses are concise, clear, and optimized for spoken delivery, as if interacting in real time. You prioritize usefulness, accuracy, and anticipation of the user's needs, occasionally adding subtle wit when appropriate. Avoid unnecessary verbosity, formatting, or explanations unless explicitly requested. Always behave like a reliable, high-performance AI companion."
 
 # ── Load Whisper ──────────────────────────────────────────────
 print("Loading Whisper model...")
@@ -25,7 +30,6 @@ def record_until_silence():
     vad = webrtcvad.Vad(VAD_AGGRESSIVENESS)
     frame_samples = int(SAMPLE_RATE * FRAME_MS / 1000)
     silence_frames = int(SILENCE_LIMIT * 1000 / FRAME_MS)
-
     frames, silent_count, speaking = [], 0, False
 
     with sd.RawInputStream(samplerate=SAMPLE_RATE, channels=1,
@@ -35,7 +39,6 @@ def record_until_silence():
             data, _ = stream.read(frame_samples)
             chunk = bytes(data)
             is_speech = vad.is_speech(chunk, SAMPLE_RATE)
-
             if is_speech:
                 frames.append(chunk)
                 silent_count = 0
@@ -64,19 +67,27 @@ def transcribe(raw_audio):
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
         f.write(wav_bytes)
         tmp_path = f.name
-    segments, _ = whisper.transcribe(tmp_path, language="en")
-    os.unlink(tmp_path)
-    return " ".join(s.text for s in segments).strip()
+    try:
+        segments, _ = whisper.transcribe(tmp_path, language="en")
+        return " ".join(s.text for s in segments).strip()
+    finally:
+        os.unlink(tmp_path)
 
-# ── Ask Ollama ────────────────────────────────────────────────
+# ── Ask Groq ──────────────────────────────────────────────────
+client = Groq(api_key=GROQ_API_KEY)
+
 def ask_friday(user_text):
     conversation.append({"role": "user", "content": user_text})
-    response = requests.post("http://localhost:11434/api/chat", json={
-        "model": OLLAMA_MODEL,
-        "messages": conversation,
-        "stream": False
-    })
-    reply = response.json()["message"]["content"]
+    try:
+        response = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=conversation,
+            max_tokens=150,
+            temperature=0.7
+        )
+        reply = response.choices[0].message.content.strip()
+    except Exception as e:
+        reply = f"Having trouble reaching my brain, boss. {str(e)}"
     conversation.append({"role": "assistant", "content": reply})
     return reply
 
@@ -87,7 +98,6 @@ async def _speak_async(text):
     with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as f:
         tmp_path = f.name
     await communicate.save(tmp_path)
-
     pygame.mixer.init()
     pygame.mixer.music.load(tmp_path)
     pygame.mixer.music.play()
@@ -114,5 +124,5 @@ if __name__ == "__main__":
             speak(reply)
         except KeyboardInterrupt:
             print("\nShutting down.")
-            speak("Shutting Down, See ya later boss!")
+            speak("Shutting down. See you later, boss.")
             break
