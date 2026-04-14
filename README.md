@@ -1,58 +1,81 @@
-# Friday VA - Virtual Assistant (Ongoing)
+# Friday VA - Virtual Assistant
 
-Friday VA is an advanced AI virtual assistant inspired by Iron Man's FRIDAY system. It listens to your voice commands, processes the transcribed audio using Groq's high-speed completion API (Llama 3.3), and speaks the responses back to you in real-time.
+Friday VA is an advanced AI virtual assistant built with a modular, API-first architecture. It features a beautiful, glassmorphic **Next.js web dashboard** powered by a highly capable **FastAPI Python backend**. Utilizing blazing-fast local STT inference, Groq's high-speed completion API (Llama 3.3), and Edge TTS, it provides a seamless, Iron Man-style real-time voice assistant experience.
 
-## Features
+## New Features
+- **Next.js Web Interface**: A sleek, dark-themed dashboard using Vanilla CSS. Speak directly into your browser using HTML5 MediaRecorder.
+- **Retrieval-Augmented Generation (RAG)**: Drag and drop PDF files into the web panel to seamlessly embed them into a local `ChromaDB` vector database. FRIDAY searches this memory bank before answering your questions to provide accurate, context-aware responses.
+- **FastAPI Backend**: The core processing logic operates as an independent REST API, capable of robust error-handling and easy deployment.
+- **Streaming Responses**: Token-by-token Sever-Sent Event (SSE) streaming allows you to watch FRIDAY's thoughts compile in real-time in the chat UI before she begins speaking.
+- **Local Speech-To-Text (STT)**: Utilizes `faster_whisper` locally for quick, private transcriptions of voice blobs sent from the browser.
 
-- **Voice Activity Detection (VAD)**: Automatically detects when you stop speaking to capture audio without requiring push-to-talk.
-- **Speech-to-Text (Local)**: Uses `faster_whisper` locally for quick and private transcription of voice inputs.
-- **High-Speed AI Inference**: Connects to the Groq API (running `llama-3.3-70b-versatile` by default) for lightning-fast and intelligent responses.
-- **Text-to-Speech (TTS)**: Utilizes Microsoft Edge TTS seamlessly integrated with `pygame` to read the assistant's responses aloud.
-- **Customizable Persona**: Easy to edit the system prompts via `.env` to create exactly the persona you want (defaults to FRIDAY).
+---
 
 ## Prerequisites
 - Python 3.8+
+- Node.js & npm (for the Next.js UI)
 - An active Groq API Key
-- If using an NVIDIA GPU for faster Whisper transcription locally, ensure you have appropriate CUDA libraries installed.
+- *(Optional)* Support for CUDA if you wish to run `faster-whisper` on an NVIDIA GPU locally.
 
 ## Installation
 
 1. **Clone or Download the Project.**
 
-2. **Install the dependencies:**
-   You can install the required packages using pip:
+2. **Install Python Dependencies (The Backend):**
    ```bash
    pip install -r requirements.txt
    ```
-   *(Note: You might need additional system libraries for `PyAudio` / `sounddevice` depending on your OS).*
 
-3. **Environment Setup:**
-   Create a `.env` file in the root of the project (if one doesn't exist) and customize your configuration. An example:
+3. **Install Node Dependencies (The Frontend):**
+   ```bash
+   cd frontend
+   npm install
+   cd ..
+   ```
+
+4. **Environment Setup:**
+   Create a `.env` file in the root of the project to customize your configuration:
    ```env
+   # Core AI
+   GROQ_API_KEY="your_groq_api_key_here"
+   OLLAMA_MODEL="llama-3.3-70b-versatile"
+   
+   # Audio Thresholds (If manually modifying backend/audio)
    SAMPLE_RATE=16000
    FRAME_MS=30
-   SILENCE_LIMIT=0.6
-   VAD_AGGRESSIVENESS=2
-   OLLAMA_MODEL="llama-3.3-70b-versatile"
-   GROQ_API_KEY="your_groq_api_key_here"
+   
+   # TTS
    VOICE="en-US-JennyNeural"
+   
+   # Persona
+   # FRIDAY_PERSONA="You are FRIDAY..."
    ```
-   *You can also uncomment or add the `FRIDAY_PERSONA` variable to change how the assistant perceives its own identity.*
+
+---
 
 ## Usage
 
-Run the main python script to start the assistant:
-
+### The Easy Way (Automated)
+If you're on Windows, you can simply run the automated launch script from your root directory:
 ```bash
-python main.py
+start.bat
+```
+This will simultaneously pop open the FastAPI Server (`localhost:8000`) and the Next.js Dev Server. Once running, go to **http://localhost:3000** in your web browser.
+
+### The Manual Way (Two Terminals)
+For complete control and raw logs, open two separate terminal instances.
+
+**Terminal 1 (Backend Brain):**
+```bash
+uvicorn backend.main:app --host 0.0.0.0 --port 8000
+```
+**Terminal 2 (Frontend GUI):**
+```bash
+cd frontend
+npm run dev
 ```
 
-- Wait for the **"FRIDAY online. How can I help you, boss?"** voice prompt.
-- Start speaking. The assistant listens until it detects silence, transcribes your speech, and quickly replies with generated audio.
-- Press `Ctrl + C` in the console to gracefully shut down the assistant.
-
-## Configuration Details
-
-- `SILENCE_LIMIT`: Adjusts how many seconds of silence denote the end of speech.
-- `VAD_AGGRESSIVENESS`: An integer from 0 to 3. 3 is the most aggressive at filtering out non-speech noise.
-- `VOICE`: Change the Edge TTS voice (e.g., `en-US-AriaNeural`, `en-US-GuyNeural`, Default: `en-US-JennyNeural`).
+### Interacting with FRIDAY
+- Navigate to `http://localhost:3000`.
+- **Add to Memory:** Upload a PDF using the dropzone on the left to securely embed it into her ChromaDB vector storage.
+- **Voice Chat:** Click and hold the **Hold to Speak** button, ask her a question, and release to send it. She will process the request natively, stream her text response, and immediately synthesize the audio back to you!
