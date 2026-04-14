@@ -2,7 +2,7 @@ import sounddevice as sd
 import webrtcvad
 import io
 import wave
-from core.config import SAMPLE_RATE, FRAME_MS, SILENCE_LIMIT, VAD_AGGRESSIVENESS
+from backend.config import SAMPLE_RATE, FRAME_MS, SILENCE_LIMIT, VAD_AGGRESSIVENESS
 
 def record_until_silence():
     vad = webrtcvad.Vad(VAD_AGGRESSIVENESS)

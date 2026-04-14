@@ -3,7 +3,7 @@ import asyncio
 import os
 import edge_tts
 import pygame
-from core.config import VOICE
+from backend.config import VOICE
 
 async def _speak_async(text):
     communicate = edge_tts.Communicate(text, VOICE)

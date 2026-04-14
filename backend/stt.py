@@ -1,7 +1,7 @@
 import os
 import tempfile
 from faster_whisper import WhisperModel
-from core.audio import audio_to_wav_bytes
+from backend.audio import audio_to_wav_bytes
 
 print("Loading Whisper model...")
 whisper_model = WhisperModel("base", device="cuda", compute_type="int8")

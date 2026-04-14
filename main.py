@@ -1,10 +1,10 @@
-from core.audio import record_until_silence
-from core.stt import transcribe
-from core.llm import ask_friday
-from core.tts import speak
+from backend.audio import record_until_silence
+from backend.stt import transcribe
+from backend.llm import ask_friday
+from backend.tts import speak
 
 def main():
-    print("FRIDAY online. Say something, boss.")
+    print("FRIDAY online. How can I help you, boss?")
     speak("FRIDAY online. How can I help you, boss?")
     
     while True:

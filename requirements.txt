@@ -6,3 +6,5 @@ groq
 python-dotenv
 edge-tts
 pygame
+chromadb
+pypdf
