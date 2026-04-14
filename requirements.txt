@@ -1,0 +1,8 @@
+sounddevice
+numpy
+webrtcvad
+faster-whisper
+groq
+python-dotenv
+edge-tts
+pygame

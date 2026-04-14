@@ -22,7 +22,7 @@ Friday VA is an advanced AI virtual assistant inspired by Iron Man's FRIDAY syst
 2. **Install the dependencies:**
    You can install the required packages using pip:
    ```bash
-   pip install sounddevice numpy webrtcvad faster-whisper groq python-dotenv edge-tts pygame
+   pip install -r requirements.txt
    ```
    *(Note: You might need additional system libraries for `PyAudio` / `sounddevice` depending on your OS).*
 
@@ -44,7 +44,7 @@ Friday VA is an advanced AI virtual assistant inspired by Iron Man's FRIDAY syst
 Run the main python script to start the assistant:
 
 ```bash
-python friday.py
+python main.py
 ```
 
 - Wait for the **"FRIDAY online. How can I help you, boss?"** voice prompt.
