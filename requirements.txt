@@ -8,3 +8,6 @@ edge-tts
 pygame
 chromadb
 pypdf
+fastapi
+uvicorn
+python-multipart

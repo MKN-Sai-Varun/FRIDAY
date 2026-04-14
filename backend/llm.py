@@ -46,3 +46,32 @@ def ask_friday(user_text):
     # We append the reply to history
     conversation.append({"role": "assistant", "content": reply})
     return reply
+
+def ask_friday_stream(user_text):
+    context = query_documents(user_text)
+    
+    if context:
+        prompt_with_context = f"Context from documents:\n{context}\n\nUser says: {user_text}"
+        conversation.append({"role": "user", "content": prompt_with_context})
+    else:
+        conversation.append({"role": "user", "content": user_text})
+        
+    try:
+        response = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=conversation,
+            max_tokens=150,
+            temperature=0.7,
+            stream=True
+        )
+        full_reply = ""
+        for chunk in response:
+            if getattr(chunk.choices[0].delta, "content", None):
+                text = chunk.choices[0].delta.content
+                full_reply += text
+                yield f"data: {text}\n\n"
+                
+        conversation.append({"role": "assistant", "content": full_reply})
+        
+    except Exception as e:
+        yield f"data: Having trouble reaching my brain, boss. {str(e)}\n\n"
