@@ -4,8 +4,7 @@ friday_db/
 __pycache__/
 *.pyc
 
-workspace/*
-!workspace/notes/
-!workspace/projects/
+workspace/notes/*
 !workspace/notes/.gitkeep
+workspace/projects/*
 !workspace/projects/.gitkeep

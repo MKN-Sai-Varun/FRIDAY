@@ -101,3 +101,11 @@ def confirm_pending(confirmation_id: str, approved: bool) -> dict:
         return {"status": "success", "result": result}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+# Register real workspace tools.
+from backend.tools.workspace import list_workspace, read_file, write_file, append_file
+
+register_tool("list_workspace", "workspace", list_workspace)
+register_tool("read_file", "workspace", read_file)
+register_tool("write_file", "workspace", write_file)
+register_tool("append_file", "workspace", append_file)
