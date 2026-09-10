@@ -12,7 +12,7 @@ app = FastAPI(title="Friday VA API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -65,14 +65,21 @@ async def api_speak(text: str = Form(...)):
 async def api_ingest(file: UploadFile = File(...)):
     if not file.filename.endswith(".pdf"):
         return {"error": "Only PDFs are supported."}
-    
+
+    contents = await file.read()
+
+    # Check the actual file signature, not just the filename.
+    # Real PDF files always start with these 5 bytes: %PDF-
+    if not contents.startswith(b"%PDF-"):
+        return {"error": "File does not appear to be a valid PDF."}
+
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-        f.write(await file.read())
+        f.write(contents)
         tmp_path = f.name
-        
+
     success, msg = ingest_pdf(tmp_path)
     os.unlink(tmp_path)
-    
+
     if success:
         return {"message": msg}
     return {"error": msg}

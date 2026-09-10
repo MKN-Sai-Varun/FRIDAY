@@ -6,6 +6,7 @@ export default function Home() {
   const [status, setStatus] = useState("Online");
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
   const [docs, setDocs] = useState<string[]>([]);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -137,18 +138,28 @@ export default function Home() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
     setStatus("Ingesting...");
+    setUploadError(null);
     const form = new FormData();
     form.append("file", e.target.files[0]);
     
     try {
-      await fetch("http://localhost:8000/ingest", { method: "POST", body: form });
+      const res = await fetch("http://localhost:8000/ingest", { method: "POST", body: form });
+      const data = await res.json();
+
+      if (data.error) {
+        setUploadError(data.error);
+        setStatus("Online");
+        return;
+      }
+
       await fetchDocs();
       setStatus("Online");
     } catch {
-      setStatus("Upload failed");
+      setUploadError("Upload failed - could not reach the server.");
+      setStatus("Online");
     }
   };
 
@@ -173,6 +184,12 @@ export default function Home() {
           <input type="file" accept=".pdf" hidden onChange={handleFileUpload} />
           <div>Drop PDF here to Add to FRIDAY's Brain</div>
         </label>
+
+        {uploadError && (
+          <div style={{ color: "#f43f5e", fontSize: "0.9rem", marginBottom: "1rem" }}>
+            ⚠️ {uploadError}
+          </div>
+        )}
         
         <div className="doc-list">
           <h4 style={{ marginBottom: "0.5rem", color: "var(--text-muted)" }}>Current Documents:</h4>
