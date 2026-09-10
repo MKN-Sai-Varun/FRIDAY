@@ -1,2 +1,5 @@
 .env
 friday_db/
+
+__pycache__/
+*.pyc

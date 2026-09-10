@@ -9,6 +9,7 @@ export default function Home() {
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const chatBottomRef = useRef<HTMLDivElement>(null);
+  const sessionId = useRef<string>(crypto.randomUUID());
   
   const fetchDocs = async () => {
     try {
@@ -80,6 +81,7 @@ export default function Home() {
       // 2. Chat SSE stream
       const chatForm = new FormData();
       chatForm.append("text", userText);
+      chatForm.append("session_id", sessionId.current);
       
       const chatRes = await fetch("http://localhost:8000/chat", {
         method: "POST",

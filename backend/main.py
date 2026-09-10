@@ -41,8 +41,8 @@ async def api_transcribe(audio: UploadFile = File(...)):
         os.unlink(tmp_path)
 
 @app.post("/chat")
-async def api_chat(text: str = Form(...)):
-    return StreamingResponse(ask_friday_stream(text), media_type="text/event-stream")
+async def api_chat(text: str = Form(...), session_id: str = Form(...)):
+    return StreamingResponse(ask_friday_stream(text, session_id), media_type="text/event-stream")
 
 @app.post("/speak")
 async def api_speak(text: str = Form(...)):
