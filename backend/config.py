@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
+WORKSPACE_ROOT = os.path.abspath("./workspace")
 SAMPLE_RATE = int(os.getenv("SAMPLE_RATE", 16000))
 FRAME_MS = int(os.getenv("FRAME_MS", 30))
 SILENCE_LIMIT = float(os.getenv("SILENCE_LIMIT", 0.6))
