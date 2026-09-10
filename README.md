@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🤖 F.R.I.D.A.Y. — Voice Assistant
+# 🤖 F.R.I.D.A.Y. - Voice Assistant
 
 **A fully local, Iron Man-inspired AI voice assistant with a sleek web dashboard.**
 
@@ -22,7 +22,7 @@
 
 FRIDAY is a modular, **API-first voice assistant** that runs directly in your browser. Inspired by Tony Stark's AI companion, it combines blazing-fast local speech recognition, cloud-accelerated LLM inference, and natural-sounding text-to-speech into a seamless, real-time conversational experience.
 
-Unlike traditional cloud-locked assistants, FRIDAY is designed to be **private by default** — your voice is transcribed locally, and your documents never leave your machine.
+Unlike traditional cloud-locked assistants, FRIDAY is designed to be **private by default** - your voice is transcribed locally, and your documents never leave your machine.
 
 ### ✨ Key Highlights
 
@@ -32,8 +32,8 @@ Unlike traditional cloud-locked assistants, FRIDAY is designed to be **private b
 | 🧠 **LLM Backend** | Groq API (Llama 3.3 70B) for ultra-low-latency responses |
 | 🔊 **Text-to-Speech** | Microsoft Edge TTS with the `en-US-JennyNeural` voice |
 | 📄 **Document Memory** | Drag-and-drop PDF ingestion with ChromaDB RAG |
-| 📡 **Streaming UI** | Token-by-token SSE streaming — watch FRIDAY think in real-time |
-| 🔒 **Local STT** | `faster-whisper` runs on your machine — your audio stays private |
+| 📡 **Streaming UI** | Token-by-token SSE streaming - watch FRIDAY think in real-time |
+| 🔒 **Local STT** | `faster-whisper` runs on your machine - your audio stays private |
 
 ---
 
@@ -71,23 +71,23 @@ Unlike traditional cloud-locked assistants, FRIDAY is designed to be **private b
 
 Before getting started, make sure you have the following installed:
 
-- **Python 3.8+** — [Download](https://python.org/downloads)
-- **Node.js & npm** — [Download](https://nodejs.org)
-- **A Groq API Key** — [Get one free](https://console.groq.com) (takes ~30 seconds)
-- *(Optional)* **CUDA-compatible NVIDIA GPU** — for faster local STT with `faster-whisper`
+- **Python 3.8+** - [Download](https://python.org/downloads)
+- **Node.js & npm** - [Download](https://nodejs.org)
+- **A Groq API Key** - [Get one free](https://console.groq.com) (takes ~30 seconds)
+- *(Optional)* **CUDA-compatible NVIDIA GPU** - for faster local STT with `faster-whisper`
 
 ---
 
 ## 🚀 Installation
 
-### Step 1 — Clone the Repository
+### Step 1 - Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/friday-va.git
 cd friday-va
 ```
 
-### Step 2 — Install Python Dependencies
+### Step 2 - Install Python Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -98,7 +98,7 @@ pip install -r requirements.txt
 > pip install faster-whisper[cuda]
 > ```
 
-### Step 3 — Install Node.js Dependencies
+### Step 3 - Install Node.js Dependencies
 
 ```bash
 cd frontend
@@ -106,7 +106,7 @@ npm install
 cd ..
 ```
 
-### Step 4 — Configure Your Environment
+### Step 4 - Configure Your Environment
 
 Create a `.env` file in the **root of the project** and populate it:
 
@@ -133,7 +133,7 @@ FRAME_MS=30
 VOICE="en-US-JennyNeural"   # Edge TTS voice name
 
 # ─────────────────────────────────────────────
-#  PERSONA (Optional — uncomment to customize)
+#  PERSONA (Optional - uncomment to customize)
 # ─────────────────────────────────────────────
 # FRIDAY_PERSONA="You are FRIDAY, an advanced AI assistant..."
 ```
@@ -147,7 +147,7 @@ VOICE="en-US-JennyNeural"   # Edge TTS voice name
 
 ## ▶️ Running FRIDAY
 
-### Option A — One-Click Launch (Windows)
+### Option A - One-Click Launch (Windows)
 
 From the project root, simply run:
 
@@ -163,16 +163,16 @@ http://localhost:3000
 
 ---
 
-### Option B — Manual Launch (All Platforms)
+### Option B - Manual Launch (All Platforms)
 
 Open **two separate terminals** from the project root.
 
-**Terminal 1 — Start the Backend:**
+**Terminal 1 - Start the Backend:**
 ```bash
 uvicorn backend.main:app --host 0.0.0.0 --port 8000
 ```
 
-**Terminal 2 — Start the Frontend:**
+**Terminal 2 - Start the Frontend:**
 ```bash
 cd frontend
 npm run dev
@@ -191,12 +191,12 @@ Once the dashboard is open, here's what you can do:
 1. Click and **hold** the `Hold to Speak` button.
 2. Ask your question clearly.
 3. **Release** the button to send.
-4. Watch FRIDAY's response stream into the chat — and listen as she speaks it back.
+4. Watch FRIDAY's response stream into the chat - and listen as she speaks it back.
 
 ### 📄 Add to Memory (RAG)
 
 1. On the left panel, find the **PDF dropzone**.
-2. **Drag and drop** any PDF file — a research paper, a manual, your notes — onto it.
+2. **Drag and drop** any PDF file - a research paper, a manual, your notes - onto it.
 3. FRIDAY will chunk, embed, and store it in her local **ChromaDB** vector database.
 4. She will now automatically search this knowledge base before answering relevant questions.
 
@@ -209,7 +209,7 @@ Once the dashboard is open, here's what you can do:
 ```
 friday-va/
 ├── backend/
-│   ├── main.py             # FastAPI app — routes, SSE streaming, orchestration
+│   ├── main.py             # FastAPI app - routes, SSE streaming, orchestration
 │   ├── stt.py              # faster-whisper transcription logic
 │   ├── llm.py              # Groq API client and prompt construction
 │   ├── tts.py              # Edge TTS synthesis
